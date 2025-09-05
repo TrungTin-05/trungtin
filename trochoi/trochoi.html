@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trò chơi Toán học</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8; /* Nền nhẹ nhàng */
+    }
+    .animate-spin-slow {
+      animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    /* Thêm các gradient và màu nền như trong ảnh */
+    .bg-custom-gradient {
+        background-color: #f0f4f8;
+        background-image: linear-gradient(135deg, #f0f4f8 0%, #e6eef5 100%);
+    }
+    .text-purple-600 {
+        color: #6d28d9;
+    }
+    .bg-fuchsia-100 {
+        background-color: #fce7f3;
+    }
+    .bg-pink-100 {
+        background-color: #fdf2f8;
+    }
+    .bg-orange-100 {
+        background-color: #fff7ed;
+    }
+    .bg-cyan-100 {
+        background-color: #ecfeff;
+    }
+    .bg-blue-100 {
+        background-color: #eff6ff;
+    }
+  </style>
+</head>
+<body class="p-6 bg-custom-gradient">
+  <main class="container mx-auto">
+    <div id="game-list" class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-purple-600 mb-2">
+        <span class="inline-block animate-spin-slow">🎮</span> Trò chơi Toán học
+      </h1>
+      <p class="text-gray-600 text-lg">Chọn một trò chơi để vừa học vừa chơi thật vui!</p>
+    </div>
+
+    <!-- Danh sách các trò chơi dưới dạng card -->
+    <div id="game-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card cho Trò chơi trí nhớ -->
+      <a href="#" class="block" onclick="showGame('tri-nho'); return false;">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-fuchsia-100 rounded-full">🧠</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Trò chơi trí nhớ</h3>
+            <p class="text-gray-500">Ghép cặp các phép tính và kết quả.</p>
+          </div>
+        </div>
+      </a>
+      
+      <!-- Card cho Trò chơi đếm số -->
+      <a href="#" class="block" onclick="showGame('dem-so'); return false;">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-pink-100 rounded-full">🍎</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Trò chơi đếm số</h3>
+            <p class="text-gray-500">Học đếm bằng cách đếm các đồ vật.</p>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card cho Game tính nhanh -->
+      <a href="#" class="block" onclick="showGame('tinh-nhanh'); return false;">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-orange-100 rounded-full">🧮</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Game tính nhanh</h3>
+            <p class="text-gray-500">Thử thách tốc độ tính toán của bạn!</p>
+          </div>
+        </div>
+      </a>
+      
+      <!-- Card cho Trò chơi Tổng hợp -->
+      <a href="#" class="block" onclick="showGame('tong-hop'); return false;">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-blue-100 rounded-full">🏆</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Trò chơi Tổng hợp</h3>
+            <p class="text-gray-500">Bao gồm nhiều loại phép toán.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Khu vực hiển thị trò chơi -->
+    <div id="game-area" class="mt-12 hidden bg-white p-6 rounded-xl shadow-lg border-2 border-gray-200">
+      <h2 class="text-3xl font-bold text-gray-700 text-center mb-6" id="game-title"></h2>
+      <div style="height: 600px;">
+        <iframe id="game-frame" src="" class="w-full h-full border-0"></iframe>
+        </div>
+      <div class="text-center mt-6">
+        <button onclick="hideGame()" class="py-2 px-6 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors">
+          Quay lại danh sách trò chơi
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /**
+     * @fileoverview Quản lý hiển thị các trò chơi trong iframe.
+     * @author Google
+     */
+
+    /**
+     * Hiển thị trò chơi được chọn trong iframe và ẩn danh sách trò chơi.
+     * @param {string} gameName Tên trò chơi để hiển thị.
+     */
+    function showGame(gameName) {
+      const gameCards = document.getElementById('game-cards');
+      const gameArea = document.getElementById('game-area');
+      const gameFrame = document.getElementById('game-frame');
+      const gameListTitle = document.getElementById('game-list');
+      const gameTitleEl = document.getElementById('game-title');
+
+      // Ẩn danh sách trò chơi
+      gameCards.classList.add('hidden');
+      gameListTitle.classList.add('hidden');
+
+      // Hiển thị khu vực trò chơi
+      gameArea.classList.remove('hidden');
+
+      // Nạp trò chơi vào iframe và cập nhật tiêu đề
+      if (gameName === 'dem-so') {
+        gameFrame.src = 'game-dem-so.html';
+        gameTitleEl.textContent = 'Trò chơi Đếm số';
+      } else if (gameName === 'tri-nho') {
+        gameFrame.src = 'game-tri-nho.html';
+        gameTitleEl.textContent = 'Trò chơi Trí nhớ';
+      } else if (gameName === 'tinh-nhanh') {
+        gameFrame.src = 'game-tinh-nhanh.html';
+        gameTitleEl.textContent = 'Game Tính Nhanh';
+      } else if (gameName === 've-so') {
+        gameFrame.src = 'game-ve-so.html'; // Giả sử có file này
+        gameTitleEl.textContent = 'Trò chơi Vẽ số';
+      } else if (gameName === 'tong-hop') {
+        gameFrame.src = 'game-tong-hop.html';
+        gameTitleEl.textContent = 'Trò chơi Tổng hợp';
+      }
+    }
+
+    /**
+     * Ẩn khu vực trò chơi và hiển thị lại danh sách trò chơi.
+     */
+    function hideGame() {
+      const gameCards = document.getElementById('game-cards');
+      const gameArea = document.getElementById('game-area');
+      const gameFrame = document.getElementById('game-frame');
+      const gameListTitle = document.getElementById('game-list');
+
+      // Ẩn khu vực trò chơi
+      gameArea.classList.add('hidden');
+      
+      // Hiển thị lại danh sách
+      gameCards.classList.remove('hidden');
+      gameListTitle.classList.remove('hidden');
+      gameFrame.src = ''; // Xóa nguồn để dừng trò chơi
+    }
+  </script>
+</body>
+</html>

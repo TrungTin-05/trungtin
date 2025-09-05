@@ -1,0 +1,272 @@
+<div id="kiemtra" class="test-section main-section">
+  <div class="test-container">
+    <h1>Bài kiểm tra Toán lớp 5</h1>
+    <p class="test-description">
+      Hoàn thành các phép tính và bài toán dưới đây. Cố lên nhé! ✨
+    </p>
+    <form id="quiz-form"></form>
+    <button id="submit-test-btn" class="btn btn-primary">Nộp bài</button>
+    <div id="result-message" class="result-message"></div>
+  </div>
+</div>
+
+<script>
+  // Tải MathJax một cách chắc chắn sau khi DOM đã được tải đầy đủ
+  document.addEventListener('DOMContentLoaded', () => {
+    const mathJaxScript = document.createElement('script');
+    mathJaxScript.type = 'text/javascript';
+    mathJaxScript.async = true;
+    mathJaxScript.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+    document.head.appendChild(mathJaxScript);
+  });
+  
+  // Hàm tìm ước số chung lớn nhất (GCD)
+  function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+  }
+
+  // Hàm rút gọn phân số
+  function simplifyFraction(numerator, denominator) {
+    if (numerator === 0) return { numerator: 0, denominator: 1 };
+    const commonDivisor = gcd(Math.abs(numerator), Math.abs(denominator));
+    return {
+      numerator: numerator / commonDivisor,
+      denominator: denominator / commonDivisor,
+    };
+  }
+
+  // Hàm làm tròn số thập phân đến một số chữ số nhất định
+  function roundDecimal(num, places) {
+    const factor = Math.pow(10, places);
+    return Math.round(num * factor) / factor;
+  }
+
+  // Hàm này sẽ tạo ngẫu nhiên các câu hỏi với nhiều dạng khác nhau
+  function generateQuiz() {
+    const quizForm = document.getElementById("quiz-form");
+    quizForm.innerHTML = ""; // Xóa các câu hỏi cũ
+    const numQuestions = 10;
+    const questions = [];
+
+    for (let i = 0; i < numQuestions; i++) {
+      const questionType = Math.floor(Math.random() * 4);
+      let questionData;
+
+      switch (questionType) {
+        case 0: // Decimal Operations
+          const numA = roundDecimal(Math.random() * 100, 2);
+          const numB = roundDecimal(Math.random() * 10, 2);
+          const opDecimal = ["+", "-", "x", ":"][Math.floor(Math.random() * 4)];
+          let answerDecimal;
+          let displayQuestionDecimal;
+
+          if (opDecimal === "+") {
+            answerDecimal = roundDecimal(numA + numB, 2);
+          } else if (opDecimal === "-") {
+            answerDecimal = roundDecimal(numA - numB, 2);
+          } else if (opDecimal === "x") {
+            answerDecimal = roundDecimal(numA * numB, 2);
+          } else {
+            answerDecimal = roundDecimal(numA / numB, 2);
+          }
+          displayQuestionDecimal = `${i + 1}. ${numA} ${opDecimal} ${numB} = ?`;
+          questionData = {
+            type: "number",
+            question: displayQuestionDecimal,
+            correctAnswer: answerDecimal,
+          };
+          break;
+        case 1: // Area of Triangle
+          const base = Math.floor(Math.random() * 20) + 5;
+          const height = Math.floor(Math.random() * 15) + 5;
+          const answerTriangle = roundDecimal((base * height) / 2, 2);
+          const questionTriangle = `${i + 1}. Một hình tam giác có độ dài đáy là ${base} cm và chiều cao là ${height} cm. Tính diện tích hình tam giác đó.`;
+          questionData = {
+            type: "number",
+            question: questionTriangle,
+            correctAnswer: answerTriangle,
+          };
+          break;
+        case 2: // Volume of Rectangular Prism
+          const length = Math.floor(Math.random() * 10) + 2;
+          const width = Math.floor(Math.random() * 8) + 2;
+          const heightPrism = Math.floor(Math.random() * 7) + 2;
+          const answerPrism = length * width * heightPrism;
+          const questionPrism = `${i + 1}. Một hình hộp chữ nhật có chiều dài ${length} cm, chiều rộng ${width} cm và chiều cao ${heightPrism} cm. Tính thể tích hình hộp chữ nhật đó.`;
+          questionData = {
+            type: "number",
+            question: questionPrism,
+            correctAnswer: answerPrism,
+          };
+          break;
+        case 3: // Phép tính phân số
+          let num1, den1, num2, den2, operator, correctAnswer;
+          den1 = Math.floor(Math.random() * 5) + 2;
+          den2 = Math.floor(Math.random() * 5) + 2;
+          num1 = Math.floor(Math.random() * den1) + 1;
+          num2 = Math.floor(Math.random() * den2) + 1;
+          const opChoice = Math.random();
+          if (opChoice < 0.5) {
+            operator = "+";
+            const newNum = num1 * den2 + num2 * den1;
+            const newDen = den1 * den2;
+            correctAnswer = simplifyFraction(newNum, newDen);
+          } else {
+            operator = "-";
+            const newNum = num1 * den2 - num2 * den1;
+            const newDen = den1 * den2;
+            correctAnswer = simplifyFraction(newNum, newDen);
+          }
+          const displayFractionQuestion = `${i + 1}. \\(\\frac{${num1}}{${den1}} ${operator} \\frac{${num2}}{${den2}} = \\) ?`;
+          questionData = {
+            type: "fraction",
+            question: displayFractionQuestion,
+            correctAnswer: correctAnswer,
+          };
+          break;
+      }
+      questions.push(questionData);
+    }
+
+    questions.forEach((q, index) => {
+      const questionDiv = document.createElement("div");
+      questionDiv.classList.add("question-item");
+      const questionLabel = document.createElement("label");
+      questionLabel.htmlFor = `q${index}`;
+      questionLabel.textContent = q.question;
+      questionDiv.appendChild(questionLabel);
+
+      if (q.type === "fraction") {
+        const inputGroup = document.createElement("div");
+        inputGroup.classList.add("fraction-input-group");
+        inputGroup.innerHTML = `
+          <input type="number" id="q${index}-numerator" name="q${index}-numerator" placeholder="Tử số">
+          <div class="fraction-line"></div>
+          <input type="number" id="q${index}-denominator" name="q${index}-denominator" placeholder="Mẫu số">
+        `;
+        questionDiv.appendChild(inputGroup);
+      } else {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = `q${index}`;
+        input.name = `q${index}`;
+        questionDiv.appendChild(input);
+      }
+      quizForm.appendChild(questionDiv);
+    });
+
+    if (typeof MathJax !== 'undefined') {
+      MathJax.typesetPromise().then(() => {
+      });
+    }
+
+    // Lưu các câu hỏi đã tạo vào form để xử lý khi nộp bài
+    quizForm.questions = questions;
+  }
+
+  // Gắn sự kiện submit cho form
+  document.getElementById("submit-test-btn").addEventListener("click", () => {
+    const questions = document.getElementById("quiz-form").questions;
+    const resultMessage = document.getElementById("result-message");
+    let correctAnswers = 0;
+
+    questions.forEach((q, index) => {
+      if (q.type === "fraction") {
+        const userNum = parseInt(document.getElementById(`q${index}-numerator`).value);
+        const userDen = parseInt(document.getElementById(`q${index}-denominator`).value);
+        const simplifiedUserAnswer = simplifyFraction(userNum, userDen);
+        if (
+          simplifiedUserAnswer.numerator === q.correctAnswer.numerator &&
+          simplifiedUserAnswer.denominator === q.correctAnswer.denominator
+        ) {
+          correctAnswers++;
+        }
+      } else {
+        const userAnswer = parseFloat(document.getElementById(`q${index}`).value);
+        if (userAnswer === q.correctAnswer) {
+          correctAnswers++;
+        }
+      }
+    });
+
+    resultMessage.textContent = `Bạn đã trả lời đúng ${correctAnswers} / ${questions.length} câu.`;
+  });
+
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .test-section {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      margin: 40px auto;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    .test-container {
+      text-align: center;
+    }
+    .test-section h1 {
+      color: #4a90e2;
+      margin-bottom: 10px;
+    }
+    .test-description {
+      font-style: italic;
+      color: #666;
+      margin-bottom: 25px;
+    }
+    .question-item {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .question-item label {
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.5em;
+    }
+    .fraction-input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 150px;
+    }
+    .fraction-input-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1.2em;
+      text-align: center;
+    }
+    .fraction-line {
+      width: 100%;
+      height: 2px;
+      background-color: #333;
+      margin: 4px 0;
+    }
+    .btn-primary {
+      background-color: #4a90e2;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #357bd8;
+    }
+    .result-message {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  `;
+  document.head.appendChild(style);
+
+  generateQuiz();
+</script>

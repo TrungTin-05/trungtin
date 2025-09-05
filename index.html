@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bé Giỏi Toán</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    🌟 Bé Giỏi Toán 🌟
+    <div class="auth-buttons">
+      <button id="login-btn">Đăng nhập</button>
+      <button id="register-btn">Đăng ký</button>
+    </div>
+     <div id="user-info-section" style="display:none; align-items: center; gap: 10px;">
+      <span id="user-display-name" style="color: #fff; font-size: 16px;"></span>
+      <button id="logout-btn">Đăng xuất</button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#" class="nav-link" data-section="home">Trang chủ</a>
+    <a href="#" class="nav-link require-login" data-section="baihoc">Bài tập</a>
+    <a href="#" class="nav-link require-login" data-section="trochoi">Trò chơi</a>
+    <a href="#" class="nav-link require-login" data-section="kiemtra">Kiểm tra</a>
+    <a href="#" class="nav-link require-login" data-section="hoso">Hồ sơ</a>
+     <a href="#" class="nav-link require-teacher" data-section="teacher-area" style="display: none;">Giáo viên</a>
+  </nav>
+
+  <main>
+    <div id="home" class="welcome main-section active">
+      <div class="intro-content">
+        <h1 class="animate-zoom-in">Chào mừng đến với thế giới Toán học vui nhộn! 🚀</h1>
+        <p>
+            Trang web này giúp học sinh tiểu học học toán qua các bài học trực quan, trò chơi thú vị và bài kiểm tra tương tác.
+        </p>
+        <p>
+            Hãy bắt đầu HÀNH TRÌNH KHÁM PHÁ cùng chúng tớ ngay bây giờ!
+        </p>
+      </div>
+
+      <div class="card-section">
+        <div class="card">
+            <a href="#" class="nav-link require-login" data-section="baihoc">
+                <span class="icon">📘</span>
+                <h3>Bài học</h3>
+                <p>Khám phá các bài học được thiết kế đặc biệt cho từng lớp.</p>
+            </a>
+        </div>
+        <div class="card">
+            <a href="#" class="nav-link require-login" data-section="trochoi">
+                <span class="icon">🎮</span>
+                <h3>Trò chơi</h3>
+                <p>Học mà chơi, chơi mà học với các trò chơi toán học hấp dẫn.</p>
+            </a>
+        </div>
+        <div class="card">
+            <a href="#" class="nav-link require-login" data-section="kiemtra">
+                <span class="icon">📝</span>
+                <h3>Kiểm tra</h3>
+                <p>Thử thách bản thân với các bài kiểm tra thú vị.</p>
+            </a>
+        </div>
+      </div>
+    </div>
+
+    <iframe id="baihoc" src="baihoc/baihoc.php" class="main-section"></iframe>
+    <iframe id="trochoi" src="trochoi/trochoi.html" class="main-section"></iframe>
+    <iframe id="kiemtra" src="kiemtra/kiemtra.html" class="main-section"></iframe>
+    <iframe id="hoso" src="hoso/hoso.html" class="main-section"></iframe>
+    <iframe id="teacher-area-iframe" src="teacher.html" class="main-section"></iframe>
+</main>
+
+  <footer style="text-align: center; padding: 10px; background-color: #f2f2f2; position: fixed; bottom: 0; width: 100%;">
+    © 2025 Website Học Toán - Thiết kế dành cho học sinh tiểu học
+  </footer>
+
+  <div class="overlay" id="popupOverlay">
+    <div class="popup-form">
+      <button class="close-btn" id="close-popup-btn">&times;</button>
+
+      <div class="toggle-btn-group">
+        <button class="toggle-btn active" id="register-toggle">Đăng ký</button>
+        <button class="toggle-btn" id="login-toggle">Đăng nhập</button>
+      </div>
+
+      <h2 id="form-title">Đăng ký</h2>
+
+      <form id="auth-form">
+        <select id="user-role-select" name="user_role_select">
+            <option>Học sinh</option>
+            <option>Giáo viên</option>
+          </select>
+          <div id="full-name-field">
+            <input type="text" id="full-name" name="full_name" placeholder="Họ và tên">
+          </div>
+        <input type="text" id="username" name="username" placeholder="Tên đăng nhập">
+          <input type="password" id="password" name="password" placeholder="Mật khẩu">
+          <div id="confirm-password-field">
+            <input type="password" id="confirm-password" name="confirm_password" placeholder="Nhập lại mật khẩu">
+          </div>
+
+        <p id="error-msg" class="error-message"></p>
+
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary" id="submit-btn">Đăng ký</button>
+          <button type="button" class="btn btn-secondary" id="cancel-popup-btn">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Popup thông báo -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-content">
+        <p id="modal-message"></p>
+        <div class="modal-buttons-ok">
+          <button id="modal-ok-btn" class="modal-button">OK</button>
+        </div>
+        <div class="modal-buttons-login-cancel" style="display: none;">
+          <button id="modal-login-btn" class="modal-button">Đăng nhập</button>
+          <button id="modal-cancel-btn" class="modal-button">Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>

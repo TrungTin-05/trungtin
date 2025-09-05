@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+body {
+font-family: 'Inter', sans-serif;
+margin: 0;
+padding-bottom: 50px; /* Thêm padding để footer không che nội dung */
+background: url('mathbg.png'); /* Đường dẫn đến hình ảnh của bạn */
+background-size: cover; /* Đảm bảo hình nền bao phủ toàn bộ khu vực */
+background-repeat: no-repeat; /* Ngăn hình nền lặp lại */
+background-attachment: fixed; /* Giữ hình nền cố định khi cuộn trang */
+}
+
+/* CSS cho header, nav, main content của website */
+header {
+background-color: #4A90E2;
+color: white;
+padding: 20px;
+text-align: center;
+font-size: 24px;
+font-weight: bold;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+nav {
+background-color: #357ABD;
+display: flex;
+justify-content: center;
+padding: 10px 0;
+}
+nav a {
+color: white;
+text-decoration: none;
+padding: 10px 20px;
+font-weight: bold;
+transition: background-color 0.3s;
+}
+nav a:hover {
+background-color: #2b6a9a;
+}
+main {
+padding: 20px;
+}
+/* Sửa đổi để main-section chiếm toàn bộ không gian còn lại và không có background */
+.main-section {
+    width: 100%;
+    height: calc(100vh - 120px); /* Điều chỉnh giá trị này để phù hợp với chiều cao header và footer của bạn */
+    border: none;
+    display: none;
+    background-color: white; /* Đặt màu nền là trắng */
+}
+
+.main-section.active {
+    display: block;
+    border: none;
+}
+.welcome {
+text-align: center;
+padding: 50px 20px;
+background-color: #f0f8ff;
+border-radius: 12px;
+border: none;
+}
+.auth-buttons button, #logout-btn {
+background-color: #f7f7f7;
+color: #333;
+border: none;
+padding: 8px 16px;
+border-radius: 6px;
+cursor: pointer;
+font-weight: bold;
+margin-left: 10px;
+transition: background-color 0.3s, transform 0.2s;
+}
+.auth-buttons button:hover, #logout-btn:hover{
+background-color: #e0e0e0;
+transform: translateY(-2px);
+}
+
+/* CSS cho popup form */
+.overlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.6);
+display: none;
+justify-content: center;
+align-items: center;
+z-index: 999;
+}
+.popup-form {
+background: #fff;
+padding: 30px 40px;
+border-radius: 12px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+width: 320px;
+max-width: 90%;
+animation: fadeIn 0.3s ease;
+position: relative;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(-20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.popup-form .close-btn {
+position: absolute;
+top: 10px;
+right: 15px;
+background: none;
+border: none;
+font-size: 20px;
+cursor: pointer;
+color: #555;
+}
+.popup-form h2 {
+text-align: center;
+margin-bottom: 20px;
+color: #333;
+}
+.popup-form input,
+.popup-form select {
+width: 100%;
+padding: 10px;
+margin-bottom: 15px;
+border-radius: 6px;
+border: 1px solid #ccc;
+font-size: 14px;
+outline: none;
+transition: border-color 0.3s, box-shadow 0.3s;
+}
+.popup-form input:focus,
+.popup-form select:focus {
+border-color: #4A90E2;
+box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+.popup-form .btn-group {
+display: flex;
+justify-content: space-between;
+margin-top: 15px;
+}
+.popup-form .btn {
+width: 48%;
+padding: 10px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+font-weight: bold;
+transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+.popup-form .btn-primary {
+background: #4A90E2;
+color: white;
+}
+.popup-form .btn-primary:hover {
+background: #357ABD;
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.popup-form .btn-secondary {
+background: #ccc;
+color: #333;
+}
+.popup-form .btn-secondary:hover {
+background: #999;
+color: white;
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.popup-form .toggle-btn-group {
+display: flex;
+justify-content: center;
+gap: 10px;
+margin-bottom: 20px;
+}
+.popup-form .toggle-btn {
+padding: 8px 16px;
+border: none;
+background: #f0f0f0;
+color: #555;
+cursor: pointer;
+border-radius: 6px;
+font-weight: bold;
+transition: background 0.3s, color 0.3s;
+}
+.popup-form .toggle-btn.active {
+background: #4A90E2;
+color: white;
+}
+.error-message {
+color: #e74c3c;
+font-size: 13px;
+text-align: center;
+margin-top: -5px;
+margin-bottom: 10px;
+display: none;
+}
+
+/* Thêm vào cuối file style.css */
+/* Các hiệu ứng động */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+from { transform: scale(0.9); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+
+.animate-zoom-in {
+animation: zoomIn 1s ease-out;
+}
+
+/* Kiểu dáng cho phần nội dung trang chủ */
+.welcome.active {
+animation: fadeIn 0.8s ease-in-out;
+}
+
+.intro-content {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.intro-content h1 {
+font-size: 3em;
+color: #4A90E2;
+margin-bottom: 10px;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.intro-content p {
+font-size: 1.2em;
+color: #555;
+max-width: 800px;
+margin: 0 auto 10px;
+line-height: 1.6;
+}
+
+.card-section {
+display: flex;
+justify-content: center;
+gap: 25px;
+flex-wrap: wrap;
+}
+
+.card {
+background-color: #f0f8ff;
+border-radius: 15px;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+width: 280px;
+text-align: center;
+}
+
+.card:hover {
+transform: translateY(-10px);
+box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card a {
+display: block;
+padding: 30px;
+text-decoration: none;
+color: #333;
+}
+
+.card a:hover {
+color: #4A90E2;
+}
+
+.card .icon {
+font-size: 3.5em;
+margin-bottom: 15px;
+display: inline-block;
+}
+
+.card h3 {
+font-size: 1.8em;
+margin-bottom: 10px;
+color: #4A90E2;
+}
+
+.card p {
+font-size: 1em;
+color: #777;
+}
+
+/* Thêm hiệu ứng cho từng thẻ */
+.card:nth-child(1) .icon { color: #FFD700; } /* Vàng */
+.card:nth-child(2) .icon { color: #32CD32; } /* Xanh lá */
+.card:nth-child(3) .icon { color: #FF4500; } /* Cam */
+
+/* CSS cho modal/popup thông báo */
+.modal-overlay {
+display: none; /* Ban đầu ẩn */
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.6);
+justify-content: center;
+align-items: center;
+z-index: 1000;
+}
+
+.modal {
+background: #fff;
+padding: 30px 40px;
+border-radius: 12px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+width: 320px;
+max-width: 90%;
+text-align: center;
+}
+
+.modal-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+}
+
+.modal-content p {
+font-size: 1.1em;
+font-weight: bold;
+color: #333;
+}
+
+.modal-buttons-login-cancel {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.modal-button {
+background-color: #4A90E2;
+color: white;
+border: none;
+padding: 10px 24px;
+border-radius: 8px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+background-color: #357ABD;
+}

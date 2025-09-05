@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ Học sinh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2f2ff;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .profile-container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4a90e2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-name {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .profile-card {
+            background-color: #f7fafd;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #d1e3f8;
+            border-radius: 0.5rem;
+            background-color: #eef5ff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-top: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        .game-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-list li:last-child {
+            border-bottom: none;
+        }
+
+        .game-list span:first-child {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .game-list span:last-child {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-section">
+                <img src="https://placehold.co/120x120/4a90e2/ffffff?text=AVT" alt="Ảnh đại diện" class="avatar">
+                <h1 id="profile-user-name" class="user-name">Người dùng</h1>
+                <p id="user-id" class="text-sm text-gray-500"></p>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="profile-card">
+            <h2 class="section-heading">📈 Tiến độ học tập</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <i class="fas fa-book-open text-3xl text-blue-500"></i>
+                    <span id="lessons-completed" class="stat-value">0</span>
+                    <span class="stat-label">Bài học đã hoàn thành</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-award text-3xl text-yellow-500"></i>
+                    <span id="badges-earned" class="stat-value">0</span>
+                    <span class="stat-label">Huy hiệu đã đạt</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-star text-3xl text-green-500"></i>
+                    <span id="average-score" class="stat-value">0%</span>
+                    <span class="stat-label">Điểm trung bình</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-stopwatch text-3xl text-red-500"></i>
+                    <span id="total-time" class="stat-value">0h</span>
+                    <span class="stat-label">Tổng thời gian học</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section -->
+        <div class="profile-card">
+            <h2 class="section-heading">🎮 Trò chơi đã chơi</h2>
+            <ul id="game-list" class="game-list">
+                <li>
+                    <span>Đua xe số học</span>
+                    <span class="text-sm text-gray-500">Điểm cao nhất: 1500</span>
+                </li>
+                <li>
+                    <span>Giải đố hình học</span>
+                    <span class="text-sm text-gray-500">Số lần chơi: 7</span>
+                </li>
+                <li>
+                    <span>Xếp hình tính toán</span>
+                    <span class="text-sm text-gray-500">Cấp độ đã mở khóa: 5</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import các thư viện Firebase cần thiết
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // UI elements
+        const userNameElement = document.getElementById('profile-user-name');
+        const userIdElement = document.getElementById('user-id');
+        const lessonsCompletedElement = document.getElementById('lessons-completed');
+        const badgesEarnedElement = document.getElementById('badges-earned');
+        const averageScoreElement = document.getElementById('average-score');
+        const totalTimeElement = document.getElementById('total-time');
+
+        // Listen for user authentication state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in, fetch profile data
+                userIdElement.textContent = `ID người dùng: ${user.uid}`;
+                fetchUserProfile(user.uid);
+                // Also update the user name if it was received from the parent frame
+                window.parent.postMessage({ type: 'requestName' }, '*');
+            } else {
+                // User is signed out, sign in with custom token or anonymously
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi đăng nhập vào Firebase:", error);
+                }
+            }
+        });
+
+        // Fetch user profile data from Firestore in real-time
+        function fetchUserProfile(userId) {
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/profile`, 'data');
+            
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    console.log("Dữ liệu hồ sơ:", data); // Ghi lại dữ liệu để gỡ lỗi
+                    
+                    lessonsCompletedElement.textContent = data.totalLessonsCompleted || '0';
+                    badgesEarnedElement.textContent = data.badgesEarned || '0';
+                    averageScoreElement.textContent = (data.averageScore || '0') + '%';
+                    totalTimeElement.textContent = (data.totalTime || '0') + 'h';
+                    
+                    const gamesList = document.getElementById('game-list');
+                    gamesList.innerHTML = '';
+                    if (data.games && Array.isArray(data.games)) {
+                        data.games.forEach(game => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                                <span>${game.name}</span>
+                                <span class="text-sm text-gray-500">${game.stat}</span>
+                            `;
+                            gamesList.appendChild(li);
+                        });
+                    }
+                } else {
+                    // Document does not exist, set default values
+                    lessonsCompletedElement.textContent = '0';
+                    badgesEarnedElement.textContent = '0';
+                    averageScoreElement.textContent = '0%';
+                    totalTimeElement.textContent = '0h';
+                    document.getElementById('game-list').innerHTML = '';
+                }
+            }, (error) => {
+                console.error("Lỗi khi lấy dữ liệu hồ sơ:", error);
+            });
+        }
+        
+        // Listen for messages from the parent frame
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'updateName') {
+                if (userNameElement) {
+                    userNameElement.textContent = event.data.name || 'Người dùng';
+                }
+            }
+        });
+
+        // Request the user's name from the parent frame when the page loads
+        window.parent.postMessage({ type: 'requestName' }, '*');
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tính Nhanh</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
+        .game-container {
+            margin: 0 auto;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+        .question-box {
+            font-size: 40px;
+            font-weight: bold;
+            color: #3b82f6;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #d1e5fa;
+            border-radius: 8px;
+            background-color: #f1f6fc;
+        }
+        .answers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .answer-btn {
+            padding: 15px 25px;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            background-color: #a5b4fc;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .answer-btn:hover {
+            background-color: #818cf8;
+            transform: scale(1.05);
+        }
+        .answer-btn.correct {
+            background-color: #10b981;
+        }
+        .answer-btn.wrong {
+            background-color: #ef4444;
+        }
+        .score-box {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #1f2937;
+        }
+        .timer-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ef4444;
+            margin-top: 10px;
+        }
+        .message-box {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h2>Game Tính Nhanh</h2>
+        <div class="score-box">Điểm: <span id="score">0</span></div>
+        <div class="timer-box">Thời gian: <span id="timer">60</span>s</div>
+        <div class="question-box" id="question"></div>
+        <div class="answers-grid" id="answers-container"></div>
+        <div id="message" class="message-box"></div>
+    </div>
+
+    <script>
+        const questionEl = document.getElementById('question');
+        const answersContainer = document.getElementById('answers-container');
+        const scoreEl = document.getElementById('score');
+        const timerEl = document.getElementById('timer');
+        const messageEl = document.getElementById('message');
+
+        let score = 0;
+        let timer = 60;
+        let countdown;
+        let correctAnswer = 0;
+        let isGameOver = false;
+
+        function generateQuestion() {
+            if (isGameOver) return;
+
+            // Xóa các nút đáp án cũ
+            answersContainer.innerHTML = '';
+            messageEl.textContent = '';
+
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 20) + 1;
+            const operator = Math.random() > 0.5 ? '+' : '-';
+
+            let questionText;
+            if (operator === '+') {
+                correctAnswer = num1 + num2;
+                questionText = `${num1} + ${num2} = ?`;
+            } else {
+                // Đảm bảo kết quả không âm
+                if (num1 < num2) {
+                    correctAnswer = num2 - num1;
+                    questionText = `${num2} - ${num1} = ?`;
+                } else {
+                    correctAnswer = num1 - num2;
+                    questionText = `${num1} - ${num2} = ?`;
+                }
+            }
+
+            questionEl.textContent = questionText;
+
+            // Tạo các đáp án ngẫu nhiên
+            let options = [correctAnswer];
+            while (options.length < 4) {
+                let wrongAnswer = correctAnswer + Math.floor(Math.random() * 10) - 5;
+                if (wrongAnswer < 0 || options.includes(wrongAnswer)) {
+                    continue;
+                }
+                options.push(wrongAnswer);
+            }
+
+            // Sắp xếp ngẫu nhiên các đáp án
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.textContent = option;
+                button.addEventListener('click', () => checkAnswer(option, button));
+                answersContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedAnswer, button) {
+            // Vô hiệu hóa tất cả các nút để ngăn bấm nhiều lần
+            Array.from(answersContainer.children).forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                scoreEl.textContent = score;
+                button.classList.add('correct');
+                messageEl.textContent = "✅ Chính xác!";
+            } else {
+                button.classList.add('wrong');
+                messageEl.textContent = "❌ Sai rồi!";
+                // Highlight đáp án đúng
+                const correctButton = Array.from(answersContainer.children).find(btn => parseInt(btn.textContent) === correctAnswer);
+                if (correctButton) {
+                    correctButton.classList.add('correct');
+                }
+            }
+
+            // Chờ một chút rồi tạo câu hỏi mới
+            setTimeout(generateQuestion, 1000);
+        }
+
+        function startTimer() {
+            countdown = setInterval(() => {
+                timer--;
+                timerEl.textContent = timer;
+                if (timer <= 0) {
+                    clearInterval(countdown);
+                    isGameOver = true;
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function gameOver() {
+            answersContainer.innerHTML = '';
+            questionEl.textContent = 'Hết giờ!';
+            messageEl.textContent = `Kết thúc trò chơi! Điểm của bạn là ${score}.`;
+            // Bạn có thể thêm nút "Chơi lại" ở đây nếu muốn
+        }
+
+        // Bắt đầu trò chơi
+        function startGame() {
+            score = 0;
+            timer = 60;
+            isGameOver = false;
+            scoreEl.textContent = score;
+            timerEl.textContent = timer;
+            clearInterval(countdown);
+            generateQuestion();
+            startTimer();
+        }
+
+        window.onload = startGame;
+    </script>
+</body>
+</html>

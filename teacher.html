@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao Diện Mẫu 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e6f1ff;
+            color: #333;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c5282;
+            line-height: 1.2;
+        }
+        .header p {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        .form-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .form-card {
+            flex: 1 1 400px;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #cce0ff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .form-card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #2c5282;
+            border-bottom: 3px solid #2c5282;
+            padding-bottom: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+            outline: none;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #4299e1;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-submit:hover {
+            background-color: #3182ce;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .alert-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            display: none;
+            text-align: center;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Khu vực Giáo viên</h1>
+            <p>Tạo và quản lý bài học, câu hỏi một cách dễ dàng và hiệu quả.</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Form Tạo Bài Học Mới -->
+            <div class="form-card">
+                <h2>Tạo Bài Học Mới</h2>
+                <form id="create-lesson-form">
+                    <div class="form-group">
+                        <label for="lesson-title">Tiêu đề bài học</label>
+                        <input type="text" id="lesson-title" name="title" placeholder="Ví dụ: Phép tính cộng trừ cơ bản" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lesson-content">Nội dung bài học</label>
+                        <textarea id="lesson-content" name="content" placeholder="Nhập nội dung chi tiết của bài học. Bạn có thể sử dụng HTML để định dạng nội dung." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lesson-grade">Lớp</label>
+                        <select id="lesson-grade" name="grade" required>
+                            <option value="">Chọn lớp</option>
+                            <option value="1">Lớp 1</option>
+                            <option value="2">Lớp 2</option>
+                            <option value="3">Lớp 3</option>
+                            <option value="4">Lớp 4</option>
+                            <option value="5">Lớp 5</option>
+                            <option value="6">Lớp 6</option>
+                            <option value="7">Lớp 7</option>
+                            <option value="8">Lớp 8</option>
+                            <option value="9">Lớp 9</option>
+                            <option value="10">Lớp 10</option>
+                            <option value="11">Lớp 11</option>
+                            <option value="12">Lớp 12</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit">Lưu Bài Học</button>
+                    <div id="lesson-alert" class="alert-message"></div>
+                </form>
+            </div>
+            
+            <!-- Form Tạo Câu Hỏi Mới -->
+            <div class="form-card">
+                <h2>Tạo Câu Hỏi Mới</h2>
+                <form id="create-question-form">
+                    <div class="form-group">
+                        <label for="question-lesson-id">ID Bài học</label>
+                        <input type="number" id="question-lesson-id" name="lesson_id" placeholder="Nhập ID bài học (ví dụ: 1)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="question-text">Nội dung câu hỏi</label>
+                        <textarea id="question-text" name="question_text" placeholder="Nhập nội dung câu hỏi trắc nghiệm" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="option-a">Đáp án A</label>
+                        <input type="text" id="option-a" name="option_a" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="option-b">Đáp án B</label>
+                        <input type="text" id="option-b" name="option_b" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="option-c">Đáp án C</label>
+                        <input type="text" id="option-c" name="option_c" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="option-d">Đáp án D</label>
+                        <input type="text" id="option-d" name="option_d" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correct-answer">Đáp án đúng</label>
+                        <select id="correct-answer" name="correct_answer" required>
+                            <option value="">Chọn đáp án đúng</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit">Lưu Câu Hỏi</button>
+                    <div id="question-alert" class="alert-message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lấy form
+        const createLessonForm = document.getElementById('create-lesson-form');
+        const createQuestionForm = document.getElementById('create-question-form');
+        const lessonAlert = document.getElementById('lesson-alert');
+        const questionAlert = document.getElementById('question-alert');
+
+        // Hàm hiển thị thông báo
+        function showAlert(element, message, type) {
+            element.textContent = message;
+            element.className = `alert-message alert-${type}`;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+    
+        // Xử lý form tạo bài học (chỉ hiển thị thông báo giả)
+        createLessonForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            showAlert(lessonAlert, 'Bài học đã được lưu thành công!', 'success');
+            createLessonForm.reset();
+        });
+
+        // Xử lý form tạo câu hỏi (chỉ hiển thị thông báo giả)
+        createQuestionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            showAlert(questionAlert, 'Câu hỏi đã được lưu thành công!', 'success');
+            createQuestionForm.reset();
+        });
+    </script>
+</body>
+</html>

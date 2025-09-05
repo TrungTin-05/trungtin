@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bài kiểm tra Toán</title>
+  <script type="text/javascript" async
+ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8; /* Nền nhẹ nhàng */
+    }
+    /* Thêm animation nhẹ cho thẻ iframe khi xuất hiện */
+    .fade-in {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="p-6">
+  <main class="container mx-auto max-w-4xl">
+    <!-- Tiêu đề và mô tả -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-teal-600 mb-2">
+        <span class="inline-block animate-bounce-slow">📝</span> Bài kiểm tra Toán
+      </h1>
+      <p class="text-gray-600 text-lg">Chọn một bài kiểm tra để đánh giá trình độ của bạn!</p>
+    </div>
+
+    <!-- Danh sách các bài kiểm tra dưới dạng card -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Các thẻ card được chỉnh sửa để sử dụng JavaScript -->
+      <a href="#" data-file="lop1.html" class="block quiz-link">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-indigo-100 rounded-full">✍️</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Kiểm tra lớp 1</h3>
+            <p class="text-gray-500">Phép cộng, trừ (trong phạm vi 10)</p>
+          </div>
+        </div>
+      </a>
+      
+      <a href="#" data-file="lop2.html" class="block quiz-link">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-purple-100 rounded-full">🧠</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Kiểm tra lớp 2</h3>
+            <p class="text-gray-500">Phép nhân, chia</p>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" data-file="lop3.html" class="block quiz-link">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-rose-100 rounded-full">📐</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Kiểm tra lớp 3</h3>
+            <p class="text-gray-500">Phép tính có nhớ</p>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" data-file="lop4.html" class="block quiz-link">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-teal-100 rounded-full">📚</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Kiểm tra lớp 4</h3>
+            <p class="text-gray-500">Phân số</p>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" data-file="lop5.html" class="block quiz-link">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 transition-transform duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer">
+          <span class="text-4xl p-3 bg-orange-100 rounded-full">🔢</span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">Kiểm tra lớp 5</h3>
+            <p class="text-gray-500">Số thập phân & hình học</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Container cho iframe để hiển thị bài kiểm tra -->
+    <div id="quiz-container" class="mt-12 p-6 bg-gray-50 rounded-xl shadow-inner text-center hidden">
+      <h2 class="text-2xl font-bold text-gray-700 mb-4">Bài kiểm tra đã chọn</h2>
+      <iframe id="quiz-frame" class="w-full h-screen border-none rounded-xl bg-white shadow-lg fade-in" style="min-height: 800px;"></iframe>
+    </div>
+
+    <!-- Thông báo ban đầu -->
+    <div id="initial-message" class="mt-12 p-6 bg-blue-100 rounded-xl text-center text-blue-800 font-medium">
+      <p>Chọn một bài kiểm tra ở trên để bắt đầu!</p>
+    </div>
+  </main>
+
+  <script>
+    // Lấy tất cả các thẻ a có class 'quiz-link'
+    const quizLinks = document.querySelectorAll('.quiz-link');
+    const quizFrame = document.getElementById('quiz-frame');
+    const quizContainer = document.getElementById('quiz-container');
+    const initialMessage = document.getElementById('initial-message');
+
+    // Lặp qua từng thẻ và thêm sự kiện click
+    quizLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        // Ngăn chặn hành vi mặc định của thẻ a
+        event.preventDefault();
+
+        // Lấy tên file từ thuộc tính data-file
+        const fileName = link.getAttribute('data-file');
+
+        // Đặt thuộc tính src của iframe để tải bài kiểm tra tương ứng
+        quizFrame.src = fileName;
+        
+        // Hiển thị container và ẩn thông báo ban đầu
+        quizContainer.classList.remove('hidden');
+        initialMessage.classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

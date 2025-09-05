@@ -1,0 +1,166 @@
+<div id="kiemtra" class="test-section main-section">
+  <div class="test-container">
+    <h1>Bài kiểm tra Toán lớp 3</h1>
+    <p class="test-description">
+      Hoàn thành các phép tính dưới đây. Cố lên nhé! ✨
+    </p>
+    <form id="quiz-form">
+      <!-- Các câu hỏi sẽ được thêm vào đây bằng JavaScript -->
+    </form>
+    <button id="submit-test-btn" class="btn btn-primary">Nộp bài</button>
+    <div id="result-message" class="result-message"></div>
+  </div>
+</div>
+
+<script>
+  // Hàm này sẽ tạo ngẫu nhiên các câu hỏi
+  function generateQuiz() {
+    const quizForm = document.getElementById("quiz-form");
+    quizForm.innerHTML = ""; // Xóa các câu hỏi cũ
+    const numQuestions = 10;
+    const questions = [];
+
+    for (let i = 0; i < numQuestions; i++) {
+      let num1, num2, operator, correctAnswer;
+
+      // Đảm bảo phép cộng có nhớ
+      if (Math.random() > 0.5) {
+        // Phép cộng có nhớ
+        num1 = Math.floor(Math.random() * 90) + 10; // Số có 2 chữ số
+        num2 = Math.floor(Math.random() * 90) + 10; // Số có 2 chữ số
+        operator = "+";
+        correctAnswer = num1 + num2;
+      } else {
+        // Phép trừ có nhớ
+        num1 = Math.floor(Math.random() * 90) + 10; // Số có 2 chữ số
+        num2 = Math.floor(Math.random() * num1); // Đảm bảo số bị trừ lớn hơn số trừ
+        operator = "-";
+        correctAnswer = num1 - num2;
+      }
+      questions.push({
+        question: `${num1} ${operator} ${num2} = ?`,
+        correctAnswer: correctAnswer,
+      });
+    }
+
+    questions.forEach((q, index) => {
+      const questionDiv = document.createElement("div");
+      questionDiv.classList.add("question-item");
+      questionDiv.innerHTML = `
+                <label for="q${index}">${index + 1}. ${q.question}</label>
+                <input type="number" id="q${index}" name="q${index}" required>
+            `;
+      quizForm.appendChild(questionDiv);
+    });
+
+    // Lưu đáp án vào một biến toàn cục hoặc thuộc tính của form
+    quizForm.dataset.answers = JSON.stringify(
+      questions.map((q) => q.correctAnswer)
+    );
+  }
+
+  // Xử lý sự kiện nộp bài
+  document.getElementById("submit-test-btn").addEventListener("click", () => {
+    const quizForm = document.getElementById("quiz-form");
+    const resultMessage = document.getElementById("result-message");
+    const answers = JSON.parse(quizForm.dataset.answers);
+    let score = 0;
+    let totalQuestions = answers.length;
+
+    // Lấy các câu trả lời của người dùng
+    const userAnswers = [];
+    for (let i = 0; i < totalQuestions; i++) {
+      const input = document.getElementById(`q${i}`);
+      userAnswers.push(parseInt(input.value));
+    }
+
+    // Chấm điểm
+    for (let i = 0; i < totalQuestions; i++) {
+      if (userAnswers[i] === answers[i]) {
+        score++;
+      }
+    }
+
+    // Hiển thị kết quả
+    resultMessage.textContent = `Bạn đã làm đúng ${score} / ${totalQuestions} câu.`;
+    if (score === totalQuestions) {
+      resultMessage.textContent += " Chúc mừng, bạn thật giỏi! 🎉";
+      resultMessage.style.color = "green";
+    } else {
+      resultMessage.textContent += " Hãy cố gắng hơn nhé. 💪";
+      resultMessage.style.color = "red";
+    }
+
+    // Có thể thêm hiệu ứng hoặc thông báo khác ở đây
+  });
+
+  // Tạo bài kiểm tra khi trang được tải
+  document.addEventListener("DOMContentLoaded", generateQuiz);
+</script>
+
+<style>
+  .test-section {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin: 40px auto;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  .test-container {
+    text-align: center;
+  }
+  .test-section h1 {
+    color: #4a90e2;
+    margin-bottom: 10px;
+  }
+  .test-description {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 25px;
+  }
+  .question-item {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .question-item label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .question-item input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.2em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .question-item input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+  }
+  #submit-test-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+  }
+  #submit-test-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+  .result-message {
+    margin-top: 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+</style>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò chơi Trí nhớ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
+        .game-container {
+            margin: 0 auto;
+            max-width: 650px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .card {
+            width: 100%;
+            height: 100px;
+            background-color: #a5b4fc; /* Màu nền thẻ khi chưa lật */
+            border-radius: 8px;
+            border: 2px solid #818cf8;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        .card.matched {
+            background-color: #d1fae5;
+            border-color: #34d399;
+            cursor: default;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .card-front {
+            background-color: #f3f4f6; /* Màu nền mặt trước */
+            transform: rotateY(180deg);
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+        .card-back {
+            font-size: 40px;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .new-game-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .new-game-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .message-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #10b981;
+            margin-top: 15px;
+        }
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h2>Trò chơi Trí nhớ</h2>
+        <!-- Thêm khu vực hiển thị điểm số -->
+        <div class="score-display">
+            Điểm: <span id="score-value">0</span>
+        </div>
+        <div class="grid-container" id="game-grid"></div>
+        <div class="controls">
+            <button class="new-game-btn" onclick="startGame()">Bắt đầu lại</button>
+        </div>
+        <div id="message-area" class="message-box"></div>
+    </div>
+
+    <script>
+        const gameGrid = document.getElementById('game-grid');
+        const messageArea = document.getElementById('message-area');
+        const scoreValueEl = document.getElementById('score-value');
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let lockBoard = false;
+        let score = 0; // Biến để lưu điểm
+
+        function updateScoreDisplay() {
+            scoreValueEl.textContent = score;
+        }
+
+        function createPairs() {
+            // Tạo 8 cặp phép tính và kết quả đơn giản
+            const pairs = [
+                { question: "2 + 3", answer: "5" },
+                { question: "8 - 4", answer: "4" },
+                { question: "1 + 9", answer: "10" },
+                { question: "7 - 2", answer: "5" },
+                { question: "6 + 1", answer: "7" },
+                { question: "10 - 3", answer: "7" },
+                { question: "4 + 5", answer: "9" },
+                { question: "3 + 6", answer: "9" }
+            ];
+
+            // Tạo mảng 16 thẻ
+            let allCards = [];
+            pairs.forEach(pair => {
+                allCards.push({ id: pair.question, content: pair.question });
+                allCards.push({ id: pair.question, content: pair.answer });
+            });
+
+            // Xáo trộn thẻ
+            allCards.sort(() => Math.random() - 0.5);
+            return allCards;
+        }
+
+        function createCardElement(card) {
+            const cardEl = document.createElement('div');
+            cardEl.classList.add('card');
+            cardEl.dataset.id = card.id;
+
+            const cardBack = document.createElement('div');
+            cardBack.classList.add('card-inner', 'card-back');
+            cardBack.innerHTML = "❔"; // Biểu tượng mặt sau
+
+            const cardFront = document.createElement('div');
+            cardFront.classList.add('card-inner', 'card-front');
+            cardFront.innerHTML = card.content;
+
+            cardEl.appendChild(cardBack);
+            cardEl.appendChild(cardFront);
+
+            cardEl.addEventListener('click', () => flipCard(cardEl));
+            return cardEl;
+        }
+
+        function flipCard(cardEl) {
+            if (lockBoard || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) {
+                return;
+            }
+
+            cardEl.classList.add('flipped');
+            flippedCards.push(cardEl);
+
+            if (flippedCards.length === 2) {
+                lockBoard = true;
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const [firstCard, secondCard] = flippedCards;
+            const isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+            if (isMatch) {
+                // Nếu khớp, giữ lại và thêm class "matched"
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                matchedPairs++;
+                score += 10; // Tăng điểm khi khớp
+                updateScoreDisplay();
+                resetBoard();
+                if (matchedPairs === 8) {
+                    messageArea.textContent = "🎉 Chúc mừng bạn đã thắng!";
+                }
+            } else {
+                // Nếu không khớp, lật ngược lại sau 1 giây
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    score = Math.max(0, score - 5); // Giảm điểm khi không khớp (không âm)
+                    updateScoreDisplay();
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function resetBoard() {
+            [flippedCards, lockBoard] = [[], false];
+        }
+
+        function startGame() {
+            // Reset game state
+            gameGrid.innerHTML = '';
+            matchedPairs = 0;
+            score = 0; // Đặt lại điểm về 0
+            messageArea.textContent = '';
+            updateScoreDisplay(); // Cập nhật hiển thị điểm
+            resetBoard();
+
+            // Create and display new cards
+            cards = createPairs();
+            cards.forEach(card => {
+                gameGrid.appendChild(createCardElement(card));
+            });
+        }
+
+        // Bắt đầu trò chơi khi trang tải xong
+        window.onload = startGame;
+    </script>
+</body>
+</html>

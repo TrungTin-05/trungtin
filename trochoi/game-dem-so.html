@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đếm số - Lớp 1</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            background: url('OIP 2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        .game-box {
+            margin: 60px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .question {
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        .image-container {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .image-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        .answers {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .answer-btn {
+            padding: 15px 25px;
+            font-size: 24px;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .answer-btn:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+        .correct {
+            background-color: #90ee90;
+            border-color: #2e8b57;
+        }
+        .wrong {
+            background-color: #f08080;
+            border-color: #a52a2a;
+        }
+        #next-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-box">
+        <!-- Thêm khu vực hiển thị điểm số -->
+        <div class="score-display">
+            Điểm: <span id="score-value">0</span>
+        </div>
+        <div class="question" id="questionText">
+            Đếm xem có bao nhiêu quả táo?
+        </div>
+        <div class="image-container" id="imageContainer">
+        </div>
+        <div class="answers" id="answersBox">
+        </div>
+        <p id="result" style="font-size: 20px; margin-top: 20px;"></p>
+        <button id="next-btn" onclick="generateQuestion()">Câu tiếp theo</button>
+    </div>
+
+    <script>
+        const imageContainer = document.getElementById("imageContainer");
+        const answersBox = document.getElementById("answersBox");
+        const result = document.getElementById("result");
+        const scoreValueEl = document.getElementById('score-value');
+        
+        let correctAnswer = null;
+        let score = 0; // Biến để lưu điểm
+        
+        // Dùng một mảng để lưu các hình ảnh khác nhau
+        const images = ['OIP 4.jpg', 'OIP 5.jpg', 'OIP 6.png', 'OIP 7.jpg']; 
+        // Giả sử bạn có sẵn các tệp hình ảnh trong cùng thư mục hoặc có đường dẫn tuyệt đối
+
+        /**
+         * Cập nhật điểm số trên giao diện người dùng.
+         */
+        function updateScoreDisplay() {
+            scoreValueEl.textContent = score;
+        }
+
+        /**
+         * Tạo một câu hỏi mới.
+         */
+        function generateQuestion() {
+            // Reset
+            imageContainer.innerHTML = "";
+            answersBox.innerHTML = "";
+            result.textContent = "";
+
+            // Random số lượng hình ảnh từ 1 đến 9
+            const count = Math.floor(Math.random() * 9) + 1;
+            correctAnswer = count;
+
+            // Random loại hình ảnh
+            const randomImage = images[Math.floor(Math.random() * images.length)];
+
+            // Tạo hình ảnh
+            for (let i = 0; i < count; i++) {
+                const img = document.createElement("img");
+                img.src = randomImage;
+                imageContainer.appendChild(img);
+            }
+
+            // Tạo đáp án ngẫu nhiên
+            let options = [correctAnswer];
+            while (options.length < 4) {
+                let wrong = Math.floor(Math.random() * 9) + 1;
+                if (!options.includes(wrong) && wrong !== correctAnswer) options.push(wrong);
+            }
+
+            // Sắp xếp ngẫu nhiên các đáp án
+            options = options.sort(() => 0.5 - Math.random());
+
+            // Tạo các nút đáp án
+            options.forEach(val => {
+                const button = document.createElement("button");
+                button.className = "answer-btn";
+                button.innerText = val;
+                button.addEventListener("click", () => checkAnswer(val, button));
+                answersBox.appendChild(button);
+            });
+        }
+
+        /**
+         * Kiểm tra đáp án được chọn và cập nhật điểm số.
+         * @param {number} selected - Giá trị của đáp án người chơi đã chọn.
+         * @param {HTMLElement} button - Nút mà người chơi đã nhấp vào.
+         */
+        function checkAnswer(selected, button) {
+            // Vô hiệu hóa tất cả các nút sau khi chọn
+            Array.from(answersBox.children).forEach(btn => btn.disabled = true);
+
+            if (selected === correctAnswer) {
+                button.classList.add("correct");
+                result.textContent = "🎉 Chính xác!";
+                score += 10; // Tăng điểm khi đúng
+            } else {
+                button.classList.add("wrong");
+                result.textContent = "❌ Sai rồi!";
+                score = Math.max(0, score - 5); // Giảm điểm khi sai, không cho điểm âm
+                // Highlight đáp án đúng
+                Array.from(answersBox.children).forEach(btn => {
+                    if (parseInt(btn.innerText) === correctAnswer) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+            // Cập nhật điểm số sau mỗi lần trả lời
+            updateScoreDisplay();
+        }
+
+        // Tạo câu hỏi đầu tiên khi load
+        window.onload = function() {
+            score = 0; // Đặt lại điểm về 0 khi bắt đầu game
+            updateScoreDisplay();
+            generateQuestion();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò chơi học toán vui nhộn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fcebeb;
+            background-image: linear-gradient(135deg, #fcebeb 0%, #d8eaff 100%);
+        }
+        .container-bg {
+            background-color: #fff9ed;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .section {
+            border: 4px solid #f6d19e;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        .math-problem {
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-shadow: 2px 2px #fff;
+            padding: 1rem;
+        }
+        .green-text {
+            color: #16a34a;
+        }
+        .yellow-text {
+            color: #ca8a04;
+        }
+        .pink-text {
+            color: #db2777;
+        }
+        .blue-text {
+            color: #3b82f6;
+        }
+        .shape {
+            display: inline-block;
+            font-size: 3rem;
+            margin: 0 0.25rem;
+            text-shadow: 1px 1px #888;
+        }
+        .draggable {
+            cursor: move;
+        }
+        .drop-zone {
+            border: 2px dashed #9ca3af;
+            background-color: #f3f4f6;
+            transition: background-color 0.3s;
+            min-width: 50px;
+            min-height: 50px;
+        }
+        .drop-zone.active {
+            background-color: #dbeafe;
+        }
+        .answer-input {
+            width: 80px;
+            text-align: center;
+            font-size: 2rem;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        .answer-btn {
+            padding: 10px 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .answer-btn.correct {
+            background-color: #10b981;
+        }
+        .answer-btn.wrong {
+            background-color: #ef4444;
+        }
+        .answer-btn.op-btn {
+            padding: 10px 25px;
+        }
+        .operator-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body class="p-8">
+
+<div class="max-w-6xl mx-auto container-bg p-8">
+    <!-- Header -->
+    <div class="text-center bg-fuchsia-400 text-white rounded-xl py-4 px-8 mb-8 shadow-md">
+        <h1 class="text-3xl sm:text-4xl font-bold">Trò chơi học toán vui nhộn</h1>
+    </div>
+
+    <!-- Score Display -->
+    <div class="text-center mb-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div>
+            <span class="text-xl font-bold text-green-600">Phép cộng:</span>
+            <span class="text-2xl font-bold" id="addition-score">0</span>
+        </div>
+        <div>
+            <span class="text-xl font-bold text-yellow-600">Phép trừ:</span>
+            <span class="text-2xl font-bold" id="subtraction-score">0</span>
+        </div>
+        <div>
+            <span class="text-xl font-bold text-pink-600">So sánh:</span>
+            <span class="text-2xl font-bold" id="comparison-score">0</span>
+        </div>
+        <div>
+            <span class="text-xl font-bold text-blue-600">Ghép cặp:</span>
+            <span class="text-2xl font-bold" id="matching-score">0</span>
+        </div>
+    </div>
+    <div class="text-center mb-8">
+        <span class="text-2xl font-bold text-gray-700">Tổng điểm:</span>
+        <span class="text-4xl font-bold text-indigo-600" id="total-score">0</span>
+    </div>
+
+    <!-- Main Game Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Phép cộng (Trò chơi 1) -->
+        <div class="section p-6 flex flex-col items-center">
+            <div class="math-problem green-text text-2xl sm:text-3xl" id="addition-problem"></div>
+            <div class="flex items-center space-x-2 my-4 flex-wrap" id="addition-shapes-container">
+                <div class="flex flex-wrap" id="addition-shapes-1"></div>
+                <div class="font-bold text-3xl text-gray-500 mx-2">+</div>
+                <div class="flex flex-wrap" id="addition-shapes-2"></div>
+                <div class="font-bold text-3xl text-gray-500 mx-2">=</div>
+                <input type="number" class="answer-input" id="addition-answer">
+            </div>
+            <button class="answer-btn bg-green-500 hover:bg-green-600" onclick="checkAddition()">Kiểm tra</button>
+            <p class="text-center text-sm text-gray-500 mt-2" id="addition-feedback">(Phép cộng)</p>
+        </div>
+
+        <!-- Phép trừ (Trò chơi 2) -->
+        <div class="section p-6 flex flex-col items-center">
+            <div class="math-problem yellow-text text-2xl sm:text-3xl" id="subtraction-problem"></div>
+            <div class="flex items-center space-x-2 my-4 flex-wrap" id="subtraction-shapes-container">
+                <div class="flex flex-wrap" id="subtraction-shapes-1"></div>
+                <div class="font-bold text-3xl text-gray-500 mx-2">-</div>
+                <div class="flex flex-wrap" id="subtraction-shapes-2"></div>
+                <div class="font-bold text-3xl text-gray-500 mx-2">=</div>
+                <input type="number" class="answer-input" id="subtraction-answer">
+            </div>
+            <button class="answer-btn bg-yellow-500 hover:bg-yellow-600" onclick="checkSubtraction()">Kiểm tra</button>
+            <p class="text-center text-sm text-gray-500 mt-2" id="subtraction-feedback">(Phép trừ)</p>
+        </div>
+
+        <!-- So sánh (Trò chơi 3) -->
+        <div class="section p-6 flex flex-col items-center">
+            <div class="math-problem pink-text text-2xl sm:text-3xl">So sánh</div>
+            <div class="flex items-center justify-center space-x-8 my-4">
+                <div class="flex flex-col items-center">
+                    <div class="font-bold text-6xl text-orange-400 text-shadow" id="compare-num1"></div>
+                </div>
+                <div class="operator-group mt-4">
+                    <button class="answer-btn op-btn bg-purple-500 hover:bg-purple-600" onclick="checkComparison('>')">&gt;</button>
+                    <button class="answer-btn op-btn bg-purple-500 hover:bg-purple-600" onclick="checkComparison('<')">&lt;</button>
+                    <button class="answer-btn op-btn bg-purple-500 hover:bg-purple-600" onclick="checkComparison('=')">=</button>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="font-bold text-6xl text-orange-400 text-shadow" id="compare-num2"></div>
+                </div>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-2" id="compare-feedback"></p>
+        </div>
+
+        <!-- Ghép cặp (Trò chơi 4) -->
+        <div class="section p-6 flex flex-col items-center relative">
+            <div class="math-problem blue-text text-2xl sm:text-3xl">Ghép cặp</div>
+            <div class="flex flex-wrap items-center justify-center space-x-4 my-4" id="matching-question">
+                <!-- Hình ảnh sẽ được tạo ở đây -->
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full max-w-sm mt-4" id="matching-options">
+                <!-- Các số để kéo thả -->
+            </div>
+            <p class="text-center text-gray-500 text-sm mt-2" id="matching-feedback">Hãy kéo số đúng vào ô vuông.</p>
+        </div>
+    </div>
+</div>
+<!-- Thêm nút chơi lại -->
+<div class="text-center mt-8">
+    <button class="answer-btn bg-blue-500 hover:bg-blue-600" onclick="newGame()">Chơi lại</button>
+</div>
+
+<script>
+    /**
+     * @fileoverview Quản lý logic cho tất cả các trò chơi học toán trên trang web.
+     * @author Google
+     */
+
+    let totalScore = 0;
+    let additionScore = 0;
+    let subtractionScore = 0;
+    let comparisonScore = 0;
+    let matchingScore = 0;
+
+    const totalScoreEl = document.getElementById('total-score');
+    const additionScoreEl = document.getElementById('addition-score');
+    const subtractionScoreEl = document.getElementById('subtraction-score');
+    const comparisonScoreEl = document.getElementById('comparison-score');
+    const matchingScoreEl = document.getElementById('matching-score');
+
+    /**
+     * Cập nhật điểm số trên giao diện người dùng.
+     */
+    function updateScoreDisplay() {
+        totalScore = additionScore + subtractionScore + comparisonScore + matchingScore;
+        totalScoreEl.textContent = totalScore;
+        additionScoreEl.textContent = additionScore;
+        subtractionScoreEl.textContent = subtractionScore;
+        comparisonScoreEl.textContent = comparisonScore;
+        matchingScoreEl.textContent = matchingScore;
+    }
+
+    /**
+     * Thêm điểm cho người chơi và cập nhật hiển thị.
+     * @param {string} game Tên của trò chơi ('addition', 'subtraction', etc.).
+     * @param {number} points Số điểm cần cộng hoặc trừ.
+     */
+    function addScore(game, points) {
+        if (game === 'addition') additionScore += points;
+        if (game === 'subtraction') subtractionScore += points;
+        if (game === 'comparison') comparisonScore += points;
+        if (game === 'matching') matchingScore += points;
+
+        // Đảm bảo điểm không âm cho từng trò chơi
+        if (additionScore < 0) additionScore = 0;
+        if (subtractionScore < 0) subtractionScore = 0;
+        if (comparisonScore < 0) comparisonScore = 0;
+        if (matchingScore < 0) matchingScore = 0;
+        
+        updateScoreDisplay();
+    }
+
+
+    // =================================================================
+    // Game Phép cộng
+    // =================================================================
+    const additionProblemEl = document.getElementById('addition-problem');
+    const additionShapes1El = document.getElementById('addition-shapes-1');
+    const additionShapes2El = document.getElementById('addition-shapes-2');
+    const additionAnswerInput = document.getElementById('addition-answer');
+    const additionFeedbackEl = document.getElementById('addition-feedback');
+
+    let correctAdditionAnswer;
+
+    /**
+     * Tạo và hiển thị một bài toán cộng mới.
+     */
+    function generateAdditionProblem() {
+        const num1 = Math.floor(Math.random() * 5) + 1;
+        const num2 = Math.floor(Math.random() * 5) + 1;
+        correctAdditionAnswer = num1 + num2;
+        
+        additionProblemEl.textContent = `${num1} + ${num2} = ?`;
+        additionShapes1El.innerHTML = createShapes(num1, '⬢', '#6ee7b7');
+        additionShapes2El.innerHTML = createShapes(num2, '⬟', '#d8b4fe');
+        additionAnswerInput.value = '';
+        additionFeedbackEl.textContent = '(Phép cộng)';
+        additionAnswerInput.style.backgroundColor = 'white';
+    }
+
+    /**
+     * Kiểm tra câu trả lời của người dùng cho bài toán cộng.
+     */
+    function checkAddition() {
+        const userAnswer = parseInt(additionAnswerInput.value);
+        if (userAnswer === correctAdditionAnswer) {
+            additionFeedbackEl.textContent = '✅ Chính xác!';
+            addScore('addition', 10);
+            additionAnswerInput.style.backgroundColor = '#d1fae5';
+            setTimeout(generateAdditionProblem, 1000); // Tự động chuyển câu hỏi
+        } else {
+            additionFeedbackEl.textContent = '❌ Sai rồi, thử lại nhé!';
+            addScore('addition', -5);
+            additionAnswerInput.style.backgroundColor = '#fee2e2';
+        }
+    }
+
+    // =================================================================
+    // Game Phép trừ
+    // =================================================================
+    const subtractionProblemEl = document.getElementById('subtraction-problem');
+    const subtractionShapes1El = document.getElementById('subtraction-shapes-1');
+    const subtractionShapes2El = document.getElementById('subtraction-shapes-2');
+    const subtractionAnswerInput = document.getElementById('subtraction-answer');
+    const subtractionFeedbackEl = document.getElementById('subtraction-feedback');
+
+    let correctSubtractionAnswer;
+
+    /**
+     * Tạo và hiển thị một bài toán trừ mới.
+     */
+    function generateSubtractionProblem() {
+        const num1 = Math.floor(Math.random() * 8) + 3; // Đảm bảo num1 đủ lớn
+        const num2 = Math.floor(Math.random() * (num1 - 2)) + 1;
+        correctSubtractionAnswer = num1 - num2;
+        
+        subtractionProblemEl.textContent = `${num1} - ${num2} = ?`;
+        subtractionShapes1El.innerHTML = createShapes(num1, '🍓');
+        subtractionShapes2El.innerHTML = createShapes(num2, '🍓');
+        subtractionAnswerInput.value = '';
+        subtractionFeedbackEl.textContent = '(Phép trừ)';
+        subtractionAnswerInput.style.backgroundColor = 'white';
+    }
+
+    /**
+     * Kiểm tra câu trả lời của người dùng cho bài toán trừ.
+     */
+    function checkSubtraction() {
+        const userAnswer = parseInt(subtractionAnswerInput.value);
+        if (userAnswer === correctSubtractionAnswer) {
+            subtractionFeedbackEl.textContent = '✅ Chính xác!';
+            addScore('subtraction', 10);
+            subtractionAnswerInput.style.backgroundColor = '#d1fae5';
+            setTimeout(generateSubtractionProblem, 1000); // Tự động chuyển câu hỏi
+        } else {
+            subtractionFeedbackEl.textContent = '❌ Sai rồi, thử lại nhé!';
+            addScore('subtraction', -5);
+            subtractionAnswerInput.style.backgroundColor = '#fee2e2';
+        }
+    }
+    
+    // =================================================================
+    // Game So sánh
+    // =================================================================
+    const compareNum1El = document.getElementById('compare-num1');
+    const compareNum2El = document.getElementById('compare-num2');
+    const compareFeedbackEl = document.getElementById('compare-feedback');
+
+    let correctComparisonOperator;
+
+    /**
+     * Tạo và hiển thị một bài toán so sánh mới.
+     */
+    function generateComparisonProblem() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+
+        if (num1 > num2) {
+            correctComparisonOperator = '>';
+        } else if (num1 < num2) {
+            correctComparisonOperator = '<';
+        } else {
+            correctComparisonOperator = '=';
+        }
+        
+        compareNum1El.textContent = num1;
+        compareNum2El.textContent = num2;
+        compareFeedbackEl.textContent = '';
+    }
+
+    /**
+     * Kiểm tra toán tử so sánh mà người dùng chọn.
+     * @param {string} selectedOperator Toán tử được chọn.
+     */
+    function checkComparison(selectedOperator) {
+        if (selectedOperator === correctComparisonOperator) {
+            compareFeedbackEl.textContent = '✅ Chính xác!';
+            addScore('comparison', 10);
+            compareFeedbackEl.style.color = '#10b981';
+            setTimeout(generateComparisonProblem, 1000); // Tự động chuyển câu hỏi
+        } else {
+            compareFeedbackEl.textContent = '❌ Sai rồi, thử lại nhé!';
+            addScore('comparison', -5);
+            compareFeedbackEl.style.color = '#ef4444';
+        }
+    }
+
+    // =================================================================
+    // Game Ghép cặp (Kéo thả)
+    // =================================================================
+    const matchingQuestionEl = document.getElementById('matching-question');
+    const matchingOptionsEl = document.getElementById('matching-options');
+    const matchingFeedbackEl = document.getElementById('matching-feedback');
+
+    let correctMatchingAnswer;
+
+    /**
+     * Tạo và hiển thị một bài toán ghép cặp mới.
+     */
+    function generateMatchingProblem() {
+        // Tạo một số ngẫu nhiên từ 1-4
+        correctMatchingAnswer = Math.floor(Math.random() * 4) + 1;
+
+        // Tạo câu hỏi với số lượng hình ảnh tương ứng
+        matchingQuestionEl.innerHTML = createShapes(correctMatchingAnswer, '⚽', '#ef4444');
+
+        // Tạo các tùy chọn trả lời
+        let options = [correctMatchingAnswer];
+        while (options.length < 4) {
+            const wrongAnswer = Math.floor(Math.random() * 8) + 1;
+            if (!options.includes(wrongAnswer)) {
+                options.push(wrongAnswer);
+            }
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        matchingOptionsEl.innerHTML = '';
+        options.forEach(num => {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-200 rounded-lg p-2 text-3xl font-bold text-center border-2 border-gray-300 draggable';
+            div.textContent = num;
+            div.draggable = true;
+            div.id = `draggable-${num}`;
+            matchingOptionsEl.appendChild(div);
+        });
+
+        // Tạo một drop zone
+        const dropZone = document.createElement('div');
+        dropZone.className = 'drop-zone flex items-center justify-center';
+        dropZone.innerHTML = '<span>Kéo vào đây</span>';
+        dropZone.id = 'matching-drop-zone';
+        matchingOptionsEl.appendChild(dropZone);
+
+        matchingFeedbackEl.textContent = 'Hãy kéo số đúng vào ô vuông.';
+        setupDragAndDrop();
+    }
+    
+    /**
+     * Kiểm tra đáp án kéo thả cho trò chơi ghép cặp.
+     * @param {number} draggedNumber Số được kéo.
+     */
+    function checkMatching(draggedNumber) {
+        if (draggedNumber === correctMatchingAnswer) {
+            matchingFeedbackEl.textContent = '✅ Chính xác!';
+            matchingFeedbackEl.style.color = '#10b981';
+            addScore('matching', 10);
+            setTimeout(generateMatchingProblem, 1000);
+        } else {
+            matchingFeedbackEl.textContent = '❌ Sai rồi, thử lại nhé!';
+            matchingFeedbackEl.style.color = '#ef4444';
+            addScore('matching', -5);
+        }
+    }
+
+
+    /**
+     * Thiết lập các sự kiện kéo thả cho trò chơi ghép cặp.
+     */
+    function setupDragAndDrop() {
+        const draggables = document.querySelectorAll('.draggable');
+        const dropZone = document.getElementById('matching-drop-zone');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.textContent);
+            });
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('active');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            const data = e.dataTransfer.getData('text/plain');
+            checkMatching(parseInt(data));
+        });
+    }
+
+    /**
+     * Hàm tiện ích để tạo các hình ảnh/emoji.
+     * @param {number} count Số lượng hình ảnh cần tạo.
+     * @param {string} shape Hình dạng (emoji hoặc ký tự).
+     * @param {string} color Màu sắc (tùy chọn).
+     * @returns {string} Chuỗi HTML của các hình ảnh.
+     */
+    function createShapes(count, shape, color = '') {
+        let shapes = '';
+        for (let i = 0; i < count; i++) {
+            shapes += `<span class="shape" style="color: ${color};">${shape}</span>`;
+        }
+        return shapes;
+    }
+
+    /**
+     * Reset toàn bộ game và bắt đầu lại.
+     */
+    function newGame() {
+        totalScore = 0;
+        additionScore = 0;
+        subtractionScore = 0;
+        comparisonScore = 0;
+        matchingScore = 0;
+        updateScoreDisplay();
+        generateAdditionProblem();
+        generateSubtractionProblem();
+        generateComparisonProblem();
+        generateMatchingProblem();
+    }
+
+
+    // Khởi tạo tất cả các trò chơi khi trang tải xong
+    window.onload = newGame;
+</script>
+
+</body>
+</html>
